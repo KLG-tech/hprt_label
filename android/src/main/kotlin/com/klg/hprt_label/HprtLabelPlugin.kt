@@ -47,6 +47,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodCallHandler {
                 HPRTPrinterHelper.printAreaSize("50.8", "25.4")
                 val resultPrint = HPRTPrinterHelper.printImage("50.8", "25", bmp, true, false, 0)
                 HPRTPrinterHelper.Print("1", "1")
+                if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
                 if (resultPrint == 0) result.success("success") else result.success("failed")
             } catch (ex: Exception) {
                 result.success("failed")
