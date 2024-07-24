@@ -40,9 +40,9 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 val bmp = BitmapFactory.decodeByteArray(byteData, 0, byteData!!.size, options)
                 HPRTPrinterHelper.CLS()
                 HPRTPrinterHelper.printAreaSize("30", "20")
+                HPRTPrinterHelper.Offset("4")
                 val resultPrint = HPRTPrinterHelper.printImage("30", "20", bmp, true, false, 0)
                 HPRTPrinterHelper.Print("1", "1")
-                val resultPrint2 = HPRTPrinterHelper.SelfTest()
                 if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
                 if (resultPrint == 0) result.success("success") else result.success("failed")
             } else {
