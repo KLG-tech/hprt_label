@@ -29,22 +29,20 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
         try {
             if (call.method.equals("connectIp", true)) {
                 if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
-                val ipAddress: String? = call.argument<String?>("ipAddress")
-                if (ipAddress == null) throw Exception("failed")
+                val ipAddress: String? = call.argument<String?>("ipAddress") ?: throw Exception("failed")
                 val port = "9100"
                 val resultConnect = HPRTPrinterHelper.PortOpen(context, "WiFi,$ipAddress,$port")
                 if (resultConnect == 0) result.success("success") else result.success("failed")
             } else if (call.method.equals("printImage", true)) {
-                val byteData: ByteArray? = call.argument<ByteArray?>("byteData")
-                if (byteData == null) throw Exception("failed")
+                val byteData: ByteArray? = call.argument<ByteArray?>("byteData") ?: throw Exception("failed")
                 val options = BitmapFactory.Options()
                 options.inMutable = true
-                val bmp = BitmapFactory.decodeByteArray(byteData, 0, byteData.size, options)
+                val bmp = BitmapFactory.decodeByteArray(byteData, 0, byteData!!.size, options)
                 HPRTPrinterHelper.CLS()
-                /*HPRTPrinterHelper.printAreaSize("50.8", "25.4")
-                val resultPrint = HPRTPrinterHelper.printImage("50.8", "25", bmp, true, false, 0)
-                HPRTPrinterHelper.Print("1", "1")*/
-                val resultPrint = HPRTPrinterHelper.SelfTest()
+                HPRTPrinterHelper.printAreaSize("30", "20")
+                val resultPrint = HPRTPrinterHelper.printImage("30", "20", bmp, true, false, 0)
+                HPRTPrinterHelper.Print("1", "1")
+                val resultPrint2 = HPRTPrinterHelper.SelfTest()
                 if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
                 if (resultPrint == 0) result.success("success") else result.success("failed")
             } else {
