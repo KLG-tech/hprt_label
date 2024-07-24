@@ -23,7 +23,7 @@ abstract class HprtLabelPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<bool?> connectIp(Map<String, dynamic> param) {
+  Future<String?> connectIp(Map<String, dynamic> param) {
     throw UnimplementedError('connectIp(param) has not been implemented.');
   }
 

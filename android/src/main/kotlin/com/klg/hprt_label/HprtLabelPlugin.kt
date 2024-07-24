@@ -7,11 +7,10 @@ import android.hardware.usb.UsbManager
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import tspl.HPRTPrinterHelper
 
 /** HprtLabelPlugin */
-class HprtLabelPlugin : FlutterPlugin, MethodCallHandler {
+class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
     private lateinit var channel: MethodChannel
     private lateinit var context: Context
 
@@ -26,7 +25,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodCallHandler {
         this.context = flutterPluginBinding.getApplicationContext()
     }
 
-    override fun onMethodCall(call: MethodCall, result: Result) {
+    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         if (call.method.equals("connectIp", true)) {
             if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
             val ipAddress: String? = call.argument<String>("ipAddress")

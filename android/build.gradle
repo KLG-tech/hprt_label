@@ -46,7 +46,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
+        multiDexEnabled true
     }
 
     dependencies {
@@ -54,6 +55,7 @@ android {
         testImplementation 'org.mockito:mockito-core:5.0.0'
         implementation files('src/main/libs/lzo_V1.0.jar')
         implementation files('src/main/libs/TSPL_V1.24.jar')
+        implementation 'com.android.support:multidex:2.0.1'
     }
 
     testOptions {

@@ -9,8 +9,8 @@ class MethodChannelHprtLabel extends HprtLabelPlatform {
   final methodChannel = const MethodChannel('hprt_label');
 
   @override
-  Future<bool?> connectIp(Map<String, dynamic> param) async {
-    final result = await methodChannel.invokeMethod<bool>('connectIp', param) ?? false;
+  Future<String?> connectIp(Map<String, dynamic> param) async {
+    final result = await methodChannel.invokeMethod<String>('connectIp', param) ?? "failed";
     return result;
   }
 
