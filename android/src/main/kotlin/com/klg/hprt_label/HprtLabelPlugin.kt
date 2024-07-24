@@ -1,9 +1,7 @@
 package com.klg.hprt_label
 
-import android.app.PendingIntent
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.hardware.usb.UsbManager
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -26,26 +24,29 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
-        if (call.method.equals("connectIp", true)) {
-            if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
-            val ipAddress: String? = call.argument<String>("ipAddress")
-            if (ipAddress == null) throw Exception("failed")
-            val port = "9100"
-            val resultConnect = HPRTPrinterHelper.PortOpen(context, "WiFi,$ipAddress,$port")
-            if (resultConnect == 0) result.success("success") else result.success("failed")
-        } else if (call.method.equals("printImage", true)) {
-            val byteData: ByteArray? = call.argument<ByteArray>("byteData")
-            if (byteData == null) throw Exception("failed")
-            val options = BitmapFactory.Options()
-            options.inMutable = true
-            val bmp = BitmapFactory.decodeByteArray(byteData, 0, byteData.size, options)
-            HPRTPrinterHelper.CLS()
-            HPRTPrinterHelper.printAreaSize("50.8", "25.4")
-            val resultPrint = HPRTPrinterHelper.printImage("50.8", "25", bmp, true, false, 0)
-            HPRTPrinterHelper.Print("1", "1")
-            if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
-            if (resultPrint == 0) result.success("success") else result.success("failed")
-        } else {
+        try {
+            if (call.method.equals("connectIp", true)) {
+                if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
+                val ipAddress: String = call.argument<String>("ipAddress")
+                val port = "9100"
+                val resultConnect = HPRTPrinterHelper.PortOpen(context, "WiFi,$ipAddress,$port")
+                if (resultConnect == 0) result.success("success") else result.success("failed")
+            } else if (call.method.equals("printImage", true)) {
+                val byteData: ByteArray = call.argument<ByteArray>("byteData")
+                val options = BitmapFactory.Options()
+                options.inMutable = true
+                val bmp = BitmapFactory.decodeByteArray(byteData, 0, byteData.size, options)
+                HPRTPrinterHelper.CLS()
+                HPRTPrinterHelper.printAreaSize("50.8", "25.4")
+                val resultPrint = HPRTPrinterHelper.printImage("50.8", "25", bmp, true, false, 0)
+                HPRTPrinterHelper.Print("1", "1")
+                HPRTPrinterHelper.SelfTest()
+                if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
+                if (resultPrint == 0) result.success("success") else result.success("failed")
+            } else {
+                result.success("failed")
+            }
+        } catch (ex: Exception) {
             result.success("failed")
         }
     }
