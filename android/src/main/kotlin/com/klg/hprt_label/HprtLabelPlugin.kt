@@ -55,8 +55,10 @@ class HprtLabelPlugin : FlutterPlugin, MethodCallHandler {
                 result.success("failed")
             }
         } else {
-            result.success("failed")
+            return result.success("failed")
         }
+
+        return result.success("failed")
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
