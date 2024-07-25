@@ -65,7 +65,9 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                             val intf = device!!.getInterface(i)
                             if (intf.interfaceClass == 7) {
                                 havePrinter = true
-                                mUsbManager.requestPermission(device, mPermissionIntent)
+                                if (!mUsbManager.hasPermission(device)) {
+                                    mUsbManager.requestPermission(device, mPermissionIntent)
+                                }
                             }
                         }
                     }
@@ -79,6 +81,28 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                     }
                 }
                 if (resultConnect == 0) result.success("success") else result.success("failed")
+            } else if (call.method.equals("requestUsbPermission", true)) {
+                mUsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
+                val deviceList = mUsbManager.deviceList
+                val deviceIterator: Iterator<UsbDevice> = deviceList.values.iterator()
+                var havePrinter = false
+                while (deviceIterator.hasNext()) {
+                    val currentDevice = deviceIterator.next()
+                    if (currentDevice.deviceName.contains("hprt", true)) {
+                        device = deviceIterator.next()
+                        val count = device!!.interfaceCount
+                        for (i in 0 until count) {
+                            val intf = device!!.getInterface(i)
+                            if (intf.interfaceClass == 7) {
+                                havePrinter = true
+                                if (!mUsbManager.hasPermission(device)) {
+                                    mUsbManager.requestPermission(device, mPermissionIntent)
+                                }
+                            }
+                        }
+                    }
+                }
+                result.success("success")
             } else {
                 result.success("failed")
             }
