@@ -32,7 +32,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 val ipAddress: String? = call.argument<String?>("ipAddress") ?: throw Exception("failed")
                 val port = "9100"
                 val resultConnect = HPRTPrinterHelper.PortOpen(context, "WiFi,$ipAddress,$port")
-                HPRTPrinterHelper.printAreaSize("60", "32")
+                HPRTPrinterHelper.printAreaSize("60", "19")
                 HPRTPrinterHelper.Offset("0")
                 if (resultConnect == 0) result.success("success") else result.success("failed")
             } else if (call.method.equals("printImage", true)) {
@@ -41,9 +41,9 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 options.inMutable = true
                 val bmp = BitmapFactory.decodeByteArray(byteData, 0, byteData!!.size, options)
                 HPRTPrinterHelper.CLS()
-                HPRTPrinterHelper.printAreaSize("60", "32")
+                HPRTPrinterHelper.printAreaSize("60", "19")
                 HPRTPrinterHelper.Offset("0")
-                val resultPrint = HPRTPrinterHelper.printImage("60", "32", bmp, true, false, 0)
+                val resultPrint = HPRTPrinterHelper.printImage("60", "19", bmp, true, false, 0)
                 HPRTPrinterHelper.Print("1", "1")
                 if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
                 if (resultPrint == 0) result.success("success") else result.success("failed")
