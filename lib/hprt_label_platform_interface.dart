@@ -30,4 +30,8 @@ abstract class HprtLabelPlatform extends PlatformInterface {
   Future<String?> printImage(Map<String, dynamic> param) {
     throw UnimplementedError('printImage(param) has not been implemented.');
   }
+
+  Future<String?> requestUsbPermission() {
+    throw UnimplementedError('requestUsbPermission has not been implemented.');
+  }
 }

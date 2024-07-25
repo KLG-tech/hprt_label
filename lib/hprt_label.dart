@@ -16,4 +16,12 @@ class HprtLabel {
       rethrow;
     }
   }
+
+  Future<String?> requestUsbPermission() async {
+    try {
+      return HprtLabelPlatform.instance.requestUsbPermission();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

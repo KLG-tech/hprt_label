@@ -19,4 +19,10 @@ class MethodChannelHprtLabel extends HprtLabelPlatform {
     final result = await methodChannel.invokeMethod<String>('printImage', param) ?? "failed";
     return result;
   }
+
+  @override
+  Future<String?> requestUsbPermission() async {
+    final result = await methodChannel.invokeMethod<String>('requestUsbPermission') ?? "failed";
+    return result;
+  }
 }
