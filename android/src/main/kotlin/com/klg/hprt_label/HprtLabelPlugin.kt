@@ -2,6 +2,7 @@ package com.klg.hprt_label
 
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
@@ -19,11 +20,17 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
     private lateinit var mUsbManager: UsbManager
     private var device: UsbDevice? = null
     private lateinit var mPermissionIntent: PendingIntent
+    private val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         this.channel = MethodChannel(flutterPluginBinding.binaryMessenger, "hprt_label")
         this.channel.setMethodCallHandler(this)
         this.context = flutterPluginBinding.getApplicationContext()
+        this.mPermissionIntent = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
+        } else {
+            PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_UPDATE_CURRENT)
+        }
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
