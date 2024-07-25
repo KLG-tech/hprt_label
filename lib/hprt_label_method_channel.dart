@@ -21,6 +21,12 @@ class MethodChannelHprtLabel extends HprtLabelPlatform {
   }
 
   @override
+  Future<String?> connectUsb() async {
+    final result = await methodChannel.invokeMethod<String>('connectUsb') ?? "failed";
+    return result;
+  }
+
+  @override
   Future<String?> requestUsbPermission() async {
     final result = await methodChannel.invokeMethod<String>('requestUsbPermission') ?? "failed";
     return result;

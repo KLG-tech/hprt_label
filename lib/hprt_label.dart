@@ -17,6 +17,14 @@ class HprtLabel {
     }
   }
 
+  Future<String?> connectUsb() async {
+    try {
+      return HprtLabelPlatform.instance.connectUsb();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<String?> requestUsbPermission() async {
     try {
       return HprtLabelPlatform.instance.requestUsbPermission();
