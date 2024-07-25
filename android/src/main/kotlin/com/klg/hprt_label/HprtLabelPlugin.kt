@@ -58,33 +58,23 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
                 if (resultPrint == 0) result.success("success") else result.success("failed")
             } else if (call.method.equals("connectUsb", true)) {
-                if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
                 mUsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
                 val deviceList = mUsbManager.deviceList
                 val deviceIterator: Iterator<UsbDevice> = deviceList.values.iterator()
-                var havePrinter = false
+                var HavePrinter = false
                 while (deviceIterator.hasNext()) {
                     device = deviceIterator.next()
                     val count = device!!.interfaceCount
                     for (i in 0 until count) {
                         val intf = device!!.getInterface(i)
                         if (intf.interfaceClass == 7) {
-                            havePrinter = true
-                            if (!mUsbManager.hasPermission(device)) {
-                                mUsbManager.requestPermission(device, mPermissionIntent)
-                            }
+                            HavePrinter = true
+                            mUsbManager.requestPermission(device, mPermissionIntent)
                         }
                     }
+                    var resultConnect = HPRTPrinterHelper.PortOpen(context, device!!)
                 }
-                var resultConnect = -1
-                if (havePrinter && device != null) {
-                    resultConnect = HPRTPrinterHelper.PortOpen(context, device!!)
-                    if (resultConnect == 0) {
-                        HPRTPrinterHelper.printAreaSize("64", "18")
-                        HPRTPrinterHelper.Offset("0")
-                    }
-                }
-                if (resultConnect == 0) result.success("success") else result.success("failed")
+                result.success("success")
             } else if (call.method.equals("requestUsbPermission", true)) {
                 mUsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
                 val deviceList = mUsbManager.deviceList
