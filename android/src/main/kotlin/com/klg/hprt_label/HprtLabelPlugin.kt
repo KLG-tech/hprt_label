@@ -57,17 +57,14 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 val deviceIterator: Iterator<UsbDevice> = deviceList.values.iterator()
                 var havePrinter = false
                 while (deviceIterator.hasNext()) {
-                    val currentDevice = deviceIterator.next()
-                    if (currentDevice.deviceName.contains("hprt", true)) {
-                        device = deviceIterator.next()
-                        val count = device!!.interfaceCount
-                        for (i in 0 until count) {
-                            val intf = device!!.getInterface(i)
-                            if (intf.interfaceClass == 7) {
-                                havePrinter = true
-                                if (!mUsbManager.hasPermission(device)) {
-                                    mUsbManager.requestPermission(device, mPermissionIntent)
-                                }
+                    device = deviceIterator.next()
+                    val count = device!!.interfaceCount
+                    for (i in 0 until count) {
+                        val intf = device!!.getInterface(i)
+                        if (intf.interfaceClass == 7) {
+                            havePrinter = true
+                            if (!mUsbManager.hasPermission(device)) {
+                                mUsbManager.requestPermission(device, mPermissionIntent)
                             }
                         }
                     }
@@ -87,17 +84,14 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 val deviceIterator: Iterator<UsbDevice> = deviceList.values.iterator()
                 var havePrinter = false
                 while (deviceIterator.hasNext()) {
-                    val currentDevice = deviceIterator.next()
-                    if (currentDevice.deviceName.contains("hprt", true)) {
-                        device = deviceIterator.next()
-                        val count = device!!.interfaceCount
-                        for (i in 0 until count) {
-                            val intf = device!!.getInterface(i)
-                            if (intf.interfaceClass == 7) {
-                                havePrinter = true
-                                if (!mUsbManager.hasPermission(device)) {
-                                    mUsbManager.requestPermission(device, mPermissionIntent)
-                                }
+                    device = deviceIterator.next()
+                    val count = device!!.interfaceCount
+                    for (i in 0 until count) {
+                        val intf = device!!.getInterface(i)
+                        if (intf.interfaceClass == 7) {
+                            havePrinter = true
+                            if (!mUsbManager.hasPermission(device)) {
+                                mUsbManager.requestPermission(device, mPermissionIntent)
                             }
                         }
                     }
