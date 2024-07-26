@@ -18,7 +18,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  //final _hprtLabelPlugin = HprtLabel();
+  final _hprtLabelPlugin = HprtLabel();
 
   @override
   void initState() {
@@ -46,10 +46,15 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _platformVersion = platformVersion;
     });*/
+
+    var test = await _hprtLabelPlugin.requestUsbPermission();
+    var test2 = test;
+    log("Result = ${test2}");
   }
 
   @override
   Widget build(BuildContext context) {
+    initPlatformState();
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(

@@ -29,7 +29,7 @@ android {
         namespace 'com.klg.hprt_label'
     }
 
-    compileSdkVersion 33
+    compileSdkVersion 30
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -47,6 +47,7 @@ android {
 
     defaultConfig {
         minSdkVersion 21
+        targetSdkVersion 30
         multiDexEnabled true
     }
 

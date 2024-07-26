@@ -26,11 +26,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
         this.channel = MethodChannel(flutterPluginBinding.binaryMessenger, "hprt_label")
         this.channel.setMethodCallHandler(this)
         this.context = flutterPluginBinding.getApplicationContext()
-        this.mPermissionIntent = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
-        } else {
-            PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_UPDATE_CURRENT)
-        }
+        this.mPermissionIntent = PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), 0)
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -45,6 +41,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                     HPRTPrinterHelper.Offset("0")
                 }
                 if (resultConnect == 0) result.success("success") else result.success("failed")
+
             } else if (call.method.equals("printImage", true)) {
                 val byteData: ByteArray? = call.argument<ByteArray?>("byteData") ?: throw Exception("failed")
                 val options = BitmapFactory.Options()
@@ -57,48 +54,61 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 HPRTPrinterHelper.Print("1", "1")
                 if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
                 if (resultPrint == 0) result.success("success") else result.success("failed")
+
             } else if (call.method.equals("connectUsb", true)) {
                 mUsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
                 val deviceList = mUsbManager.deviceList
-                val deviceIterator: Iterator<UsbDevice> = deviceList.values.iterator()
-                var HavePrinter = false
-                while (deviceIterator.hasNext()) {
-                    device = deviceIterator.next()
-                    val count = device!!.interfaceCount
-                    for (i in 0 until count) {
-                        val intf = device!!.getInterface(i)
-                        if (intf.interfaceClass == 7) {
-                            HavePrinter = true
-                            mUsbManager.requestPermission(device, mPermissionIntent)
+                var havePrinter = false
+                deviceList.values.iterator().forEach {
+                    val deviceName = it.deviceName
+                    val deviceManufactureName = it.manufacturerName ?: ""
+                    val productName = it.productName ?: ""
+                    if (deviceName.contains("hprt", true) || deviceManufactureName.contains("hprt", true) || productName.contains("hprt", true) ||
+                        deviceName.contains("print", true) || deviceManufactureName.contains("print", true) || productName.contains("print", true) ||
+                        deviceName.contains("rt", true) || deviceManufactureName.contains("rt", true) || productName.contains("rt", true)
+                    ) {
+                        if (!mUsbManager.hasPermission(it)) {
+                            mUsbManager.requestPermission(it, mPermissionIntent)
+                        } else {
+                            device = it
+                            havePrinter = true
                         }
                     }
-                    var resultConnect = HPRTPrinterHelper.PortOpen(context, device!!)
                 }
-                result.success("success")
+                var resultConnect = -1
+                if (havePrinter && device != null) {
+                    if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
+                    resultConnect = HPRTPrinterHelper.PortOpen(context, device)
+                    if (resultConnect == 0) {
+                        HPRTPrinterHelper.printAreaSize("64", "18")
+                        HPRTPrinterHelper.Offset("0")
+                    }
+                }
+                if (resultConnect == 0) result.success("success") else result.success("failed")
+
             } else if (call.method.equals("requestUsbPermission", true)) {
                 mUsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
                 val deviceList = mUsbManager.deviceList
-                val deviceIterator: Iterator<UsbDevice> = deviceList.values.iterator()
-                var havePrinter = false
-                while (deviceIterator.hasNext()) {
-                    device = deviceIterator.next()
-                    val count = device!!.interfaceCount
-                    for (i in 0 until count) {
-                        val intf = device!!.getInterface(i)
-                        if (intf.interfaceClass == 7) {
-                            havePrinter = true
-                            if (!mUsbManager.hasPermission(device)) {
-                                mUsbManager.requestPermission(device, mPermissionIntent)
-                            }
+                deviceList.values.iterator().forEach {
+                    val deviceName = it.deviceName
+                    val deviceManufactureName = it.manufacturerName ?: ""
+                    val productName = it.productName ?: ""
+                    if (deviceName.contains("hprt", true) || deviceManufactureName.contains("hprt", true) || productName.contains("hprt", true) ||
+                        deviceName.contains("print", true) || deviceManufactureName.contains("print", true) || productName.contains("print", true) ||
+                        deviceName.contains("rt", true) || deviceManufactureName.contains("rt", true) || productName.contains("rt", true)
+                    ) {
+                        if (!mUsbManager.hasPermission(it)) {
+                            mUsbManager.requestPermission(it, mPermissionIntent)
                         }
                     }
                 }
                 result.success("success")
+
             } else {
                 result.success("failed")
             }
         } catch (ex: Exception) {
-            result.success("failed")
+            result.success(ex.toString())
         }
     }
 
