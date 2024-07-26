@@ -56,6 +56,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 if (resultPrint == 0) result.success("success") else result.success("failed")
 
             } else if (call.method.equals("connectUsb", true)) {
+                mPermissionIntent = PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), 0)
                 mUsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
                 val deviceList = mUsbManager.deviceList
                 var havePrinter = false
@@ -87,6 +88,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 if (resultConnect == 0) result.success("success") else result.success("failed")
 
             } else if (call.method.equals("requestUsbPermission", true)) {
+                mPermissionIntent = PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), 0)
                 mUsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
                 val deviceList = mUsbManager.deviceList
                 deviceList.values.iterator().forEach {
