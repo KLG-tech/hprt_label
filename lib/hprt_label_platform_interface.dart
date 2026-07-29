@@ -1,3 +1,6 @@
+import 'package:hprt_label/model/hprt_image_to_print.dart';
+import 'package:hprt_label/model/hprt_ip_address.dart';
+import 'package:hprt_label/model/hprt_paper_size.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'hprt_label_method_channel.dart';
@@ -23,19 +26,23 @@ abstract class HprtLabelPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> connectIp(Map<String, dynamic> param) {
+  Future<bool?> connectIp(HPRTIpAddress param) {
     throw UnimplementedError('connectIp(param) has not been implemented.');
   }
 
-  Future<String?> printImage(Map<String, dynamic> param) {
+  Future<bool?> printImage(HPRTImageToPrint param) {
     throw UnimplementedError('printImage(param) has not been implemented.');
   }
 
-  Future<String?> connectUsb() {
+  Future<bool?> connectUsb() {
     throw UnimplementedError('connectUsb has not been implemented.');
   }
 
-  Future<String?> requestUsbPermission() {
+  Future<bool?> requestUsbPermission() {
     throw UnimplementedError('requestUsbPermission has not been implemented.');
+  }
+
+  Future<bool?> setPaperSize(HPRTPaperSize size) {
+    throw UnimplementedError('setPaperSize(size) has not been implemented.');
   }
 }
