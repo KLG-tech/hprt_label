@@ -40,7 +40,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
             "connectUsb" -> onConnectUsb(result)
             "printImage" -> onPrintImage(result, call.argument<ByteArray?>("byteData"))
             "requestUsbPermission" -> onRequestPermission(result)
-            "setPaperSize" -> onSetPaperSize(result, call.argument<Float?>("width"), call.argument<Float?>("height"))
+            "setPaperSize" -> onSetPaperSize(result, call.argument<Double?>("width")?.toFloat(), call.argument<Double?>("height")?.toFloat())
             else -> result.notImplemented()
         }
     }
@@ -147,9 +147,9 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
 
     private fun checkDevice(device: UsbDevice): Boolean {
         return whitelist.any {
-            device.deviceName.contains(it, ignoreCase = true) || (device.manufacturerName
-                    ?: "").contains(it, ignoreCase = true) || (device.productName
-                    ?: "").contains(it, ignoreCase = true)
+            device.deviceName.contains(it, true) || (device.manufacturerName
+                    ?: "").contains(it, true) || (device.productName
+                    ?: "").contains(it, true)
         }
     }
 }
