@@ -31,7 +31,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
         this.channel = MethodChannel(flutterPluginBinding.binaryMessenger, "hprt_label")
         this.channel.setMethodCallHandler(this)
         this.context = flutterPluginBinding.applicationContext
-        this.mPermissionIntent = PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), 0)
+        this.mPermissionIntent = PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE)
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -96,7 +96,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
     }
 
     private fun onConnectUsb(result: MethodChannel.Result) {
-        mPermissionIntent = PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), 0)
+        mPermissionIntent = PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE)
         mUsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
         val deviceList = mUsbManager.deviceList
         var havePrinter = false
@@ -127,7 +127,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
 
     private fun onRequestPermission(result: MethodChannel.Result) {
         try {
-            mPermissionIntent = PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), 0)
+            mPermissionIntent = PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE)
             mUsbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
             val deviceList = mUsbManager.deviceList
 
