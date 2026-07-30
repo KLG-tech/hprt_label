@@ -74,15 +74,21 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
 
     private fun onPrintImage(result: MethodChannel.Result, byte: ByteArray?) {
         try {
+            if (!HPRTPrinterHelper.IsOpened()) {
+                result.error("400", "Printer is not connected", "Printer is not connected")
+                return
+            }
+            
             val byteData: ByteArray? = byte
             val options = BitmapFactory.Options()
             options.inMutable = true
             val bmp = BitmapFactory.decodeByteArray(byteData, 0, byteData!!.size, options)
             HPRTPrinterHelper.CLS()
             setPrintAreaSizeAndOffset()
-            val resultPrint = HPRTPrinterHelper.printImage(paperSize.width.toString(), paperSize.height.toString(), bmp, true, false, 0)
+            HPRTPrinterHelper.Direction("1")
+            val resultPrint = HPRTPrinterHelper.printImage("0", "0", bmp, true, false, 0)
             HPRTPrinterHelper.Print(copy.toString(), copy.toString())
-            if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
+            
             result.success(resultPrint == 0)
         } catch (e: Exception) {
             result.error("400", e.message, e.message)

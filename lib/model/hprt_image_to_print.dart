@@ -1,4 +1,4 @@
-import 'dart:nativewrappers/_internal/vm/lib/typed_data_patch.dart';
+import 'dart:typed_data';
 
 class HPRTImageToPrint {
   final ByteData image;
@@ -8,6 +8,6 @@ class HPRTImageToPrint {
   });
 
   Map<String, dynamic> toJson() => {
-        "byteData": image,
+        "byteData": image.buffer.asUint8List(image.offsetInBytes, image.lengthInBytes),
       };
 }
