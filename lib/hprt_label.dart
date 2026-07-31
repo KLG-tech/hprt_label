@@ -44,4 +44,12 @@ class HprtLabel {
       rethrow;
     }
   }
+
+  Future<bool?> setCoordinate(HPRTCoordinate size) async {
+    try {
+      return HprtLabelPlatform.instance.setCoordinate(size);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

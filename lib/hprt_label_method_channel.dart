@@ -40,4 +40,10 @@ class MethodChannelHprtLabel extends HprtLabelPlatform {
     final result = await methodChannel.invokeMethod<bool>("setPaperSize", size.toJson()) ?? false;
     return result;
   }
+
+  @override
+  Future<bool?> setCoordinate(HPRTCoordinate size) async {
+    final result = await methodChannel.invokeMethod<bool>("setCoordinate", size.toJson()) ?? false;
+    return result;
+  }
 }

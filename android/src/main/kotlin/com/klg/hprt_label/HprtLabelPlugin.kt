@@ -25,6 +25,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
 
     private val copy:Int = 1
     private var paperSize: SizeFCompat = SizeFCompat(52.0F, 23.0F)
+    private var coordinate: SizeFCompat = SizeFCompat(0.0F, 0.0F)
     private val whitelist: List<String> = listOf("hprt", "print", "rt")
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -41,6 +42,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
             "printImage" -> onPrintImage(result, call.argument<ByteArray?>("byteData"))
             "requestUsbPermission" -> onRequestPermission(result)
             "setPaperSize" -> onSetPaperSize(result, call.argument<Double?>("width")?.toFloat(), call.argument<Double?>("height")?.toFloat())
+            "setCoordinate" -> onSetCoordinate(result, call.argument<Double?>("x")?.toFloat(), call.argument<Double?>("y")?.toFloat())
             else -> result.notImplemented()
         }
     }
@@ -86,7 +88,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
             HPRTPrinterHelper.CLS()
             setPrintAreaSizeAndOffset()
             HPRTPrinterHelper.Direction("1")
-            val resultPrint = HPRTPrinterHelper.printImage("0", "0", bmp, true, false, 0)
+            val resultPrint = HPRTPrinterHelper.printImage(coordinate.width.toString(), coordinate.height.toString(), bmp, true, false, 0)
             HPRTPrinterHelper.Print(copy.toString(), copy.toString())
             
             result.success(resultPrint == 0)
@@ -143,6 +145,18 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
             result.success(true)
         } catch (e: Exception) {
             result.error("400", e.message, e.message)
+        }
+    }
+
+    private fun onSetCoordinate(result: MethodChannel.Result, x:Float?, y:Float?) {
+        try {
+            val xCoordinate:Float = x ?: 0.0F
+            val yCoordinate:Float = y ?: 0.0F
+
+            coordinate = SizeFCompat(xCoordinate, yCoordinate)
+            result.success(true)
+        } catch (e: Exception) {
+            result.success(false)
         }
     }
 

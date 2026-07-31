@@ -45,4 +45,8 @@ abstract class HprtLabelPlatform extends PlatformInterface {
   Future<bool?> setPaperSize(HPRTPaperSize size) {
     throw UnimplementedError('setPaperSize(size) has not been implemented.');
   }
+
+  Future<bool?> setCoordinate(HPRTCoordinate size) {
+    throw UnimplementedError('setCoordinate(size) has not been implemented.');
+  }
 }
