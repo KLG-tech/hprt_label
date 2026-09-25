@@ -43,6 +43,7 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
             "requestUsbPermission" -> onRequestPermission(result)
             "setPaperSize" -> onSetPaperSize(result, call.argument<Double?>("width")?.toFloat(), call.argument<Double?>("height")?.toFloat())
             "setCoordinate" -> onSetCoordinate(result, call.argument<Double?>("x")?.toFloat(), call.argument<Double?>("y")?.toFloat())
+            "disconnect" -> disconnect(result)
             else -> result.notImplemented()
         }
     }
@@ -170,6 +171,19 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
             device.deviceName.contains(it, true) || (device.manufacturerName
                     ?: "").contains(it, true) || (device.productName
                     ?: "").contains(it, true)
+        }
+    }
+
+    private fun disconnect(result: MethodChannel.Result) {
+        try {
+            if (HPRTPrinterHelper.IsOpened()) {
+                val isClosed = HPRTPrinterHelper.PortClose()
+                result.success(isClosed)
+            } else {
+                result.success(true)
+            }
+        } catch (e: Exception) {
+            result.error("500", e.message, null)
         }
     }
 }

@@ -46,4 +46,10 @@ class MethodChannelHprtLabel extends HprtLabelPlatform {
     final result = await methodChannel.invokeMethod<bool>("setCoordinate", size.toJson()) ?? false;
     return result;
   }
+
+  @override
+  Future<bool?> disconnect() async {
+    final result = await methodChannel.invokeMethod<bool>("disconnect") ?? false;
+    return result;
+  }
 }

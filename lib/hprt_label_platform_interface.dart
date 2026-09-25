@@ -49,4 +49,8 @@ abstract class HprtLabelPlatform extends PlatformInterface {
   Future<bool?> setCoordinate(HPRTCoordinate size) {
     throw UnimplementedError('setCoordinate(size) has not been implemented.');
   }
+
+  Future<bool?> disconnect() {
+    throw UnimplementedError('disconnect() has not been implemented.');
+  }
 }

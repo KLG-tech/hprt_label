@@ -52,4 +52,12 @@ class HprtLabel {
       rethrow;
     }
   }
+
+  Future<bool?> disconnect() async {
+    try {
+      return HprtLabelPlatform.instance.disconnect();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
