@@ -52,23 +52,23 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
         channel.setMethodCallHandler(null)
     }
 
+    // Gambaran perubahan di HprtLabelPlugin.kt
+    private fun formatTsplNumber(value: Float): String {
+        return if (value % 1.0f == 0.0f) value.toInt().toString() else value.toString()
+    }
+
     private fun onConnectToIp(result: MethodChannel.Result, ipAddress: String) {
         if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
         val port = "9100"
         val resultConnect = HPRTPrinterHelper.PortOpen(context, "WiFi,$ipAddress,$port")
-        if (resultConnect == 0) {
-            setPrintAreaSizeAndOffset()
-        }
         result.success(resultConnect == 0)
     }
 
-    private fun onSetPaperSize(result: MethodChannel.Result, width:Float?, height: Float?) {
+    private fun onSetPaperSize(result: MethodChannel.Result, width: Float?, height: Float?) {
         try {
-            val paperWidth:Float = width ?: 52.0F
-            val paperHeight:Float = height ?: 23.0F
-
+            val paperWidth: Float = width ?: 52.0F
+            val paperHeight: Float = height ?: 23.0F
             paperSize = SizeFCompat(paperWidth, paperHeight)
-            setPrintAreaSizeAndOffset()
             result.success(true)
         } catch (e: Exception) {
             result.success(false)
@@ -77,25 +77,40 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
 
     private fun onPrintImage(result: MethodChannel.Result, byte: ByteArray?) {
         try {
-            if (!HPRTPrinterHelper.IsOpened()) {
-                result.error("400", "Printer is not connected", "Printer is not connected")
-                return
-            }
-            
-            val byteData: ByteArray? = byte
-            val options = BitmapFactory.Options()
-            options.inMutable = true
-            val bmp = BitmapFactory.decodeByteArray(byteData, 0, byteData!!.size, options)
+            val byteData: ByteArray = byte ?: throw Exception("Image byteData is null")
+            val options = BitmapFactory.Options().apply { inMutable = true }
+            val bmp = BitmapFactory.decodeByteArray(byteData, 0, byteData.size, options)
+
             HPRTPrinterHelper.CLS()
             setPrintAreaSizeAndOffset()
             HPRTPrinterHelper.Direction("1")
-            val resultPrint = HPRTPrinterHelper.printImage(coordinate.width.toString(), coordinate.height.toString(), bmp, true, false, 0)
+            val resultPrint = HPRTPrinterHelper.printImage(
+                    coordinate.width.toInt().toString(),
+                    coordinate.height.toInt().toString(),
+                    bmp,
+                    true,
+                    false,
+                    0
+            )
             HPRTPrinterHelper.Print(copy.toString(), copy.toString())
-            
             result.success(resultPrint == 0)
         } catch (e: Exception) {
             result.error("400", e.message, e.message)
+        } finally {
+            try {
+                if (HPRTPrinterHelper.IsOpened()) {
+                    HPRTPrinterHelper.PortClose()
+                }
+            } catch (_: Exception) {}
         }
+    }
+
+    private fun setPrintAreaSizeAndOffset() {
+        HPRTPrinterHelper.printAreaSize(
+                formatTsplNumber(paperSize.width),
+                formatTsplNumber(paperSize.height)
+        )
+        HPRTPrinterHelper.Offset("0")
     }
 
     private fun onConnectUsb(result: MethodChannel.Result) {
@@ -121,9 +136,6 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
         if (havePrinter && device != null) {
             if (HPRTPrinterHelper.IsOpened()) HPRTPrinterHelper.PortClose()
             resultConnect = HPRTPrinterHelper.PortOpen(context, device)
-            if (resultConnect == 0) {
-                setPrintAreaSizeAndOffset()
-            }
         }
         result.success(resultConnect == 0)
     }
@@ -159,11 +171,6 @@ class HprtLabelPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
         } catch (e: Exception) {
             result.success(false)
         }
-    }
-
-    private fun setPrintAreaSizeAndOffset() {
-        HPRTPrinterHelper.printAreaSize(paperSize.width.toString(), paperSize.height.toString())
-        HPRTPrinterHelper.Offset("0")
     }
 
     private fun checkDevice(device: UsbDevice): Boolean {
